@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import Style from 'style-it';
+import Vibrant from 'node-vibrant';
 import Link from '../components/Link';
 import SongHeart from '../components/SongHeart';
 import { IMAGE_SIZES } from '../constants/SongConstants';
@@ -6,28 +8,38 @@ import TogglePlayButtonContainer from '../containers/TogglePlayButtonContainer';
 import { formatSongTitle } from '../utils/FormatUtils';
 import { getImageUrl } from '../utils/SongUtils';
 
+const propTypes = {
+  authed: PropTypes.object.isRequired,
+};
+
+
 class SongCard extends Component {
+
   renderTogglePlayButton() {
     const { isActive, playSong } = this.props;
-
     if (isActive) {
       return <TogglePlayButtonContainer />;
     }
 
     return (
       <div className="toggle-play-button" onClick={playSong}>
-        <i className="toggle-play-button-icon ion-ios-play" />
+      <i className="toggle-play-button-icon ion-ios-play" />
       </div>
     );
   }
 
   render() {
-    const { authed, dispatch, isActive, song, user } = this.props;
+    const { authed, dispatch, isActive, song, user, customStyle } = this.props;
     const isLiked = Boolean(song.id in authed.likes && authed.likes[song.id] === 1);
     const image = getImageUrl(song.artwork_url, IMAGE_SIZES.LARGE);
 
     return (
       <div className={`card song-card ${(isActive ? ' active' : '')}`}>
+        <img
+          style={{display:'none'}}
+          src={song.artwork_url}
+        />
+
         <div className="song-card-image" style={{ backgroundImage: `url(${image})` }}>
           {this.renderTogglePlayButton()}
         </div>
@@ -74,7 +86,7 @@ SongCard.propTypes = {
   isActive: PropTypes.bool.isRequired,
   playSong: PropTypes.func.isRequired,
   song: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 export default SongCard;

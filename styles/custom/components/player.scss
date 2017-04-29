@@ -4,7 +4,6 @@
     bottom: 0;
     width: 100%;
     background-color: #fff;
-    border-top: 1px solid #e3e3e3;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -145,7 +144,6 @@
 
     .ion-android-volume-up, .ion-android-volume-down {
         z-index: 0;
-        color: #A6D2A5;
     }
 
     .ion-android-volume-mute {
@@ -153,6 +151,6 @@
         top: 0;
         left: 0;
         z-index: 1;
-        color: #ccc;
+        opacity: 0.8;
     }
 }

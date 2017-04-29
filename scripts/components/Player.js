@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { changeCurrentTime, changeSong, toggleIsPlaying } from '../actions/PlayerActions';
 import Playlist from '../components/Playlist';
 import Popover from '../components/Popover';
+import Vibrant from 'node-vibrant';
 import SongDetails from '../components/SongDetails';
 import { CHANGE_TYPES } from '../constants/SongConstants';
 import { formatSeconds, formatStreamUrl } from '../utils/FormatUtils';
@@ -53,10 +54,60 @@ class Player extends Component {
       duration: 0,
       isSeeking: false,
       muted: false,
+      swatches: '',
+      vibrant: {},
       repeat: false,
       shuffle: false,
       volume: previousVolumeLevel || 1,
     };
+  }
+
+
+  getProminent(img) {
+    const swatchesObjts = {};
+    const newImage = new window.Image();
+    newImage.crossOrigin = 'Anonymous';
+    newImage.setAttribute("src", img.target.src);
+
+    let vibrant = new Vibrant(newImage);
+    const self = this;
+    vibrant.getSwatches(function(err, swatchObj) {
+      if (err) {
+        return;
+      }
+      for (var name in swatchObj) {
+        if (swatchObj.hasOwnProperty(name) && swatchObj[name]) {
+          swatchesObjts[name] = {
+            hex: swatchObj[name].getHex(),
+            rgb: swatchObj[name].rgb
+          }
+        }
+      }
+      self.renderHoverStyle(swatchesObjts);
+    })
+  }
+
+  renderHoverStyle(swatchesObjts) {
+    let swatches = '';
+    let vibrant = {};
+    const arrLel = [];
+
+    if(Object.keys(swatchesObjts).length > 0) {
+      swatches = `linear-gradient(45deg, ${swatchesObjts.DarkMuted.hex}, ${swatchesObjts.Muted.hex}, ${swatchesObjts.LightMuted.hex})`;
+      document.querySelector('body').style['background-image'] = swatches;
+
+      vibrant['Muted'] = swatchesObjts.Muted.hex;
+      vibrant['Vibrant'] = swatchesObjts.Vibrant ? swatchesObjts.Vibrant.hex : swatchesObjts.LightMuted.hex;
+      vibrant['LightMuted'] = swatchesObjts.LightMuted.hex;
+      vibrant['DarkMuted'] = swatchesObjts.DarkMuted.hex;
+      vibrant['LightVibrant'] = swatchesObjts.LightVibrant ? swatchesObjts.LightVibrant.hex : swatchesObjts.LightMuted.hex;
+      vibrant['DarkVibrant'] = swatchesObjts.DarkVibrant ? swatchesObjts.DarkVibrant : swatchesObjts.Muted.hex;
+
+      this.setState({
+        swatches,
+        vibrant,
+      });
+    }
   }
 
   componentDidMount() {
@@ -312,14 +363,14 @@ class Player extends Component {
 
   renderDurationBar() {
     const { currentTime } = this.props.player;
-    const { duration } = this.state;
+    const { duration, vibrant } = this.state;
 
     if (duration !== 0) {
       const width = currentTime / duration * 100;
       return (
         <div
           className="player-seek-duration-bar"
-          style={{ width: `${width}%` }}
+          style={{ width: `${width}%`, backgroundColor: vibrant.LightVibrant }}
         >
           <div
             className="player-seek-handle"
@@ -346,12 +397,12 @@ class Player extends Component {
   }
 
   renderVolumeBar() {
-    const { muted, volume } = this.state;
+    const { muted, volume, vibrant } = this.state;
     const width = muted ? 0 : volume * 100;
     return (
       <div
         className="player-seek-duration-bar"
-        style={{ width: `${width}%` }}
+        style={{ width: `${width}%`, backgroundColor: vibrant.Muted }}
       >
         <div
           className="player-seek-handle"
@@ -394,7 +445,7 @@ class Player extends Component {
     const song = songs[playingSongId];
     const user = users[song.user_id];
     const { currentTime } = player;
-    const { duration } = this.state;
+    const { duration, swatches, vibrant } = this.state;
     const prevFunc = this.changeSong.bind(this, CHANGE_TYPES.PREV);
     const nextFunc = this.changeSong.bind(
       this,
@@ -402,7 +453,7 @@ class Player extends Component {
     );
 
     return (
-      <div className="player">
+      <div className="player"  style={{ backgroundImage: swatches }}>
         <audio id="audio" ref="audio" src={formatStreamUrl(song.stream_url)} />
         <div className="container">
           <div className="player-main">
@@ -411,6 +462,8 @@ class Player extends Component {
                 alt="song artwork"
                 className="player-image"
                 src={getImageUrl(song.artwork_url)}
+                crossOrigin="anonymous"
+                onLoad={this.getProminent.bind(this)}
               />
               <SongDetails
                 dispatch={dispatch}
@@ -425,19 +478,19 @@ class Player extends Component {
                 className="player-button"
                 onClick={prevFunc}
               >
-                <i className="icon ion-ios-rewind" />
+                <i className="icon ion-ios-rewind" style={{ color: vibrant.LightMuted }} />
               </div>
               <div
                 className="player-button"
                 onClick={this.togglePlay}
               >
-                <i className={`icon ${(isPlaying ? 'ion-ios-pause' : 'ion-ios-play')}`} />
+                <i className={`icon ${(isPlaying ? 'ion-ios-pause' : 'ion-ios-play')}`} style={{ color: vibrant.LightMuted }} />
               </div>
               <div
                 className="player-button"
                 onClick={nextFunc}
               >
-                <i className="icon ion-ios-fastforward" />
+                <i className="icon ion-ios-fastforward" style={{ color: vibrant.LightMuted }} />
               </div>
             </div>
             <div className="player-section player-seek">
@@ -446,7 +499,7 @@ class Player extends Component {
                   {this.renderDurationBar()}
                 </div>
               </div>
-              <div className="player-time">
+              <div className="player-time" style={{ color: vibrant.DarkMuted }}>
                 <span>{formatSeconds(currentTime)}</span>
                 <span className="player-time-divider">/</span>
                 <span>{formatSeconds(duration)}</span>
@@ -457,27 +510,28 @@ class Player extends Component {
                 className={`player-button ${(this.state.repeat ? ' active' : '')}`}
                 onClick={this.toggleRepeat}
               >
-                <i className="icon ion-loop" />
+                <i className="icon ion-loop" style={{ color: vibrant.DarkMuted }} />
               </div>
               <div
                 className={`player-button ${(this.state.shuffle ? ' active' : '')}`}
                 onClick={this.toggleShuffle}
               >
-                <i className="icon ion-shuffle" />
+                <i className="icon ion-shuffle" style={{ color: vibrant.DarkMuted }} />
               </div>
               <Popover className="player-button top-right">
-                <i className="icon ion-android-list" />
+                <i className="icon ion-android-list" style={{ color: vibrant.DarkMuted }} />
                 {this.renderPlaylist()}
               </Popover>
               <div
                 className="player-button player-volume-button"
                 onClick={this.toggleMute}
+                style={{ color: vibrant.DarkMuted }}
               >
                 {this.renderVolumeIcon()}
               </div>
               <div className="player-volume">
                 <div className="player-seek-bar-wrap" onClick={this.changeVolume}>
-                  <div className="player-seek-bar" ref="volumeBar">
+                  <div className="player-seek-bar" ref="volumeBar" style={{ backgroundColor: vibrant.DarkMuted }}>
                     {this.renderVolumeBar()}
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import Vibrant from 'node-vibrant';
 import { playSong } from '../actions/PlayerActions';
 import { fetchSongsIfNeeded } from '../actions/PlaylistsActions';
 import infiniteScrollify from '../components/InfiniteScrollify';
@@ -13,7 +14,7 @@ const propTypes = {
   playlist: PropTypes.string.isRequired,
   playlists: PropTypes.object.isRequired,
   songs: PropTypes.object.isRequired,
-  users: PropTypes.object.isRequired,
+  users: PropTypes.object.isRequired
 };
 
 class SongCards extends Component {
@@ -69,6 +70,7 @@ class SongCards extends Component {
       });
     }
   }
+
 
   getScrollState(props) {
     const { height, playlists, playlist } = props;
@@ -128,7 +130,6 @@ class SongCards extends Component {
         const user = users[song.user_id];
         const index = i + j;
         const playSongFunc = this.playSong.bind(this, index);
-
         return (
           <div className="col-1-5 clearfix" key={`${index}-${song.id}`}>
             <SongCard

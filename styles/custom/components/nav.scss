@@ -1,7 +1,5 @@
 .nav {
     height: 50px;
-    background-color: #3a3f41;
-
     .container {
         height: 100%;
     }
@@ -20,7 +18,7 @@
 .nav-nav-item-link {
     display: inline-block;
     margin: 10px 30px;
-    color: rgba(255,255,255, 0.5);
+    color: rgba(255,255,255, 1);
     letter-spacing: 2px;
     text-transform: uppercase;
 
@@ -53,10 +51,9 @@
 
 .nav-nav-user-link-text {
     display: inline-block;
-    color: rgba(255,255,255, 0.5);
-    border-bottom: 1px dotted #3a3f41;
+    color: rgba(255,255,255, 1);
     text-transform: uppercase;
-    font-weight: 400;
+    font-weight: bold;
     font-size: 12px;
     letter-spacing: 2px;
     max-width: 200px;
