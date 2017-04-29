@@ -4,7 +4,7 @@
     &.active {
         border-color: #A6D2A5;
         .song-card-image:before {
-            box-shadow: none;
+            opacity: 0;
         }
     }
 }
@@ -29,12 +29,13 @@
         right: 0;
         bottom: 0;
         box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-        transition: box-shadow .6s cubic-bezier(0.215, 0.61, 0.355, 1);
+        opacity: 1;
+        transition: opacity .4s cubic-bezier(0.215, 0.61, 0.355, 1);
     }
     &:hover {
         cursor: pointer;
         &:before {
-            box-shadow: none;
+            opacity: 0;
         }
     }
 }
