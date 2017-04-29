@@ -138,7 +138,7 @@ class Song extends Component {
         <div className="content">
           <div className="grid">
             <div className="col-7-10">
-              <div className={`song card ${(isActive ? ' active' : '')}`}>
+              <div className={`song card main ${(isActive ? ' active' : '')}`}>
                 <div className="song-main">
                   <div
                     className="song__image"

@@ -50,6 +50,18 @@ class SongListItem extends Component {
         </div>
         <div className="song-list-item__info__wrap">
           <div className="song-list-item__info">
+            <div className="song-list-item__user">
+              <Link
+                className="song-list-item-username"
+                dispatch={dispatch}
+                route={{ path: ['users', song.user_id] }}
+              >
+                <div
+                className="song-list-item-user-image"
+                  style={{ backgroundImage: `url(${getImageUrl(user.avatar_url)})` }}
+                />
+              </Link>
+            </div>
             <Link
               className="song-list-item-title"
               dispatch={dispatch}
@@ -58,19 +70,7 @@ class SongListItem extends Component {
               {song.title}
             </Link>
             <div className="song-list-item-info-extra">
-              <div className="song-list-item__user">
-                <div
-                  className="song-list-item-user-image"
-                  style={{ backgroundImage: `url(${getImageUrl(user.avatar_url)})` }}
-                />
-                <Link
-                  className="song-list-item-username"
-                  dispatch={dispatch}
-                  route={{ path: ['users', song.user_id] }}
-                >
-                  {user.username}
-                </Link>
-              </div>
+             
               <div className="song-list-item-stats">
                 <SongHeartCount
                   authed={authed}

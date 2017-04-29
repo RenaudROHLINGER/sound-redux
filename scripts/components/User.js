@@ -153,7 +153,7 @@ class User extends Component {
         <div className="content">
           <div className="grid">
             <div className="col-7-10">
-              <div className="user card">
+              <div className="user card main">
                 <div className="user-detail">
                   <img
                     alt="user avatar"
