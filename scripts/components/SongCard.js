@@ -1,6 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import Style from 'style-it';
-import Vibrant from 'node-vibrant';
 import Link from '../components/Link';
 import SongHeart from '../components/SongHeart';
 import { IMAGE_SIZES } from '../constants/SongConstants';
@@ -29,7 +27,7 @@ class SongCard extends Component {
   }
 
   render() {
-    const { authed, dispatch, isActive, song, user, customStyle } = this.props;
+    const { authed, dispatch, isActive, song, user } = this.props;
     const isLiked = Boolean(song.id in authed.likes && authed.likes[song.id] === 1);
     const image = getImageUrl(song.artwork_url, IMAGE_SIZES.LARGE);
 

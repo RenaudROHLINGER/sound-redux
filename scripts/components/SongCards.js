@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import Vibrant from 'node-vibrant';
 import { playSong } from '../actions/PlayerActions';
 import { fetchSongsIfNeeded } from '../actions/PlaylistsActions';
 import infiniteScrollify from '../components/InfiniteScrollify';

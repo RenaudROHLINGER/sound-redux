@@ -54,7 +54,6 @@ class Player extends Component {
       duration: 0,
       isSeeking: false,
       muted: false,
-      swatches: '',
       vibrant: {},
       repeat: false,
       shuffle: false,
@@ -90,12 +89,12 @@ class Player extends Component {
   renderHoverStyle(swatchesObjts) {
     let swatches = '';
     let vibrant = {};
-    const arrLel = [];
 
     if(Object.keys(swatchesObjts).length > 0) {
       swatches = `linear-gradient(45deg, ${swatchesObjts.DarkMuted.hex}, ${swatchesObjts.Muted.hex}, ${swatchesObjts.LightMuted.hex})`;
       document.querySelector('body').style['background-image'] = swatches;
 
+      vibrant['swatches'] = swatches;
       vibrant['Muted'] = swatchesObjts.Muted.hex;
       vibrant['Vibrant'] = swatchesObjts.Vibrant ? swatchesObjts.Vibrant.hex : swatchesObjts.LightMuted.hex;
       vibrant['LightMuted'] = swatchesObjts.LightMuted.hex;
@@ -104,8 +103,7 @@ class Player extends Component {
       vibrant['DarkVibrant'] = swatchesObjts.DarkVibrant ? swatchesObjts.DarkVibrant : swatchesObjts.Muted.hex;
 
       this.setState({
-        swatches,
-        vibrant,
+        vibrant
       });
     }
   }
@@ -445,7 +443,7 @@ class Player extends Component {
     const song = songs[playingSongId];
     const user = users[song.user_id];
     const { currentTime } = player;
-    const { duration, swatches, vibrant } = this.state;
+    const { duration, vibrant } = this.state;
     const prevFunc = this.changeSong.bind(this, CHANGE_TYPES.PREV);
     const nextFunc = this.changeSong.bind(
       this,
@@ -453,7 +451,7 @@ class Player extends Component {
     );
 
     return (
-      <div className="player"  style={{ backgroundImage: swatches }}>
+      <div className="player"  style={{ backgroundImage: vibrant.swatches }}>
         <audio id="audio" ref="audio" src={formatStreamUrl(song.stream_url)} />
         <div className="container">
           <div className="player-main">
