@@ -23,13 +23,14 @@ class Link extends Component {
   }
 
   render() {
-    const { children, className, route, title } = this.props;
+    const { children, className, route, title, color } = this.props;
 
     return (
       <a
         className={className}
         href={`/#/${constructUrl(route)}`}
         onClick={this.handleClick}
+        style={{ color: color }}
         title={title ? String(title) : ''}
       >
         {children}

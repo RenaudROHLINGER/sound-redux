@@ -33,11 +33,6 @@ class SongCard extends Component {
 
     return (
       <div className={`card song-card ${(isActive ? ' active' : '')}`}>
-        <img
-          style={{display:'none'}}
-          src={song.artwork_url}
-        />
-
         <div className="song-card-image" style={{ backgroundImage: `url(${image})` }}>
           {this.renderTogglePlayButton()}
         </div>

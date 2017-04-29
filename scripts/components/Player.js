@@ -400,7 +400,7 @@ class Player extends Component {
     return (
       <div
         className="player-seek-duration-bar"
-        style={{ width: `${width}%`, backgroundColor: vibrant.Muted }}
+        style={{ width: `${width}%`, backgroundColor: vibrant.LightVibrant }}
       >
         <div
           className="player-seek-handle"
@@ -467,6 +467,7 @@ class Player extends Component {
                 dispatch={dispatch}
                 songId={song.id}
                 title={song.title}
+                vibrant={vibrant}
                 userId={user.id}
                 username={user.username}
               />
@@ -493,7 +494,7 @@ class Player extends Component {
             </div>
             <div className="player-section player-seek">
               <div className="player-seek-bar-wrap" onClick={this.seek}>
-                <div className="player-seek-bar" ref="seekBar">
+                <div className="player-seek-bar" ref="seekBar" style={{backgroundColor: vibrant.DarkMuted}}>
                   {this.renderDurationBar()}
                 </div>
               </div>

@@ -12,12 +12,13 @@ const propTypes = {
 
 class SongDetails extends Component {
   render() {
-    const { dispatch, songId, title, userId, username } = this.props;
+    const { dispatch, songId, title, userId, username, vibrant } = this.props;
     return (
       <div className="song-card-details">
         <Link
           className="song-card-title"
           dispatch={dispatch}
+          color={vibrant.LightVibrant}
           route={{ path: ['songs', songId] }}
           title={title}
         >
@@ -26,6 +27,7 @@ class SongDetails extends Component {
         <Link
           className="song-card-user-username"
           dispatch={dispatch}
+          color={vibrant.LightVibrant}
           route={{ path: ['users', userId] }}
           title={username}
         >
