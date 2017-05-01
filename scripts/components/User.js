@@ -7,6 +7,7 @@ import Followings from '../components/Followings';
 import SongListItem from '../components/SongListItem';
 import Spinner from '../components/Spinner';
 import stickify from '../components/Stickify';
+import TweetEmbed from '../components/TweetEmbed';
 
 import { USER_PLAYLIST_SUFFIX } from '../constants/PlaylistConstants';
 import { IMAGE_SIZES } from '../constants/SongConstants';
@@ -49,6 +50,7 @@ class User extends Component {
   playSong(i) {
     const { dispatch, userId, users } = this.props;
     const user = users[userId];
+    console.log(user)
     if (!user) {
       return;
     }
@@ -87,6 +89,39 @@ class User extends Component {
 
     const followings = user.followings.map(followingId => users[followingId]);
     return <Followings dispatch={dispatch} height={height} users={followings} />;
+  }  
+
+  renderTweets() {
+    const { userId, users } = this.props;
+    const user = users[userId];
+
+    if (!user) {
+      return null;
+    }
+    const profiles = user.profiles;
+    if (profiles) {
+      const tweetId = profiles.find(function(o) { return o.service === 'twitter'; })
+      
+      if(!tweetId) {
+        return null;
+      }
+
+      const opts = {
+        'tweet-limit': 1,
+        height: 300,
+        chrome: 'noheader nofooter noborders transparent noscrollbar'
+      }
+      return (
+        <div className="followings">
+        <div className="followings-header">
+          <div className="followings-title">
+            Tweeter
+          </div>
+        </div>
+        <TweetEmbed username={tweetId.username} options={opts}  />
+        </div>
+      );
+    }
   }
 
   renderSongs() {
@@ -186,6 +221,7 @@ class User extends Component {
             </div>
             <div className="col-3-10">
               <div className={`sidebar ${(sticky ? 'sticky' : '')}`}>
+                {this.renderTweets()}
                 {this.renderFollowings()}
               </div>
             </div>

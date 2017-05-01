@@ -4,6 +4,7 @@ import { changeCurrentTime, changeSong, toggleIsPlaying } from '../actions/Playe
 import Playlist from '../components/Playlist';
 import Popover from '../components/Popover';
 import Vibrant from 'node-vibrant';
+import Vizualizer from '../components/Vizualizer';
 import SongDetails from '../components/SongDetails';
 import { CHANGE_TYPES } from '../constants/SongConstants';
 import { formatSeconds, formatStreamUrl } from '../utils/FormatUtils';
@@ -40,7 +41,6 @@ class Player extends Component {
     this.handlePause = this.handlePause.bind(this);
     this.handleTimeUpdate = this.handleTimeUpdate.bind(this);
     this.handleVolumeChange = this.handleVolumeChange.bind(this);
-
     this.seek = this.seek.bind(this);
     this.toggleMute = this.toggleMute.bind(this);
     this.togglePlay = this.togglePlay.bind(this);
@@ -55,6 +55,9 @@ class Player extends Component {
       isSeeking: false,
       muted: false,
       vibrant: {},
+      frequencyData: null,
+      audio: null,
+      audioCtx: null,
       repeat: false,
       shuffle: false,
       volume: previousVolumeLevel || 1,
@@ -108,10 +111,38 @@ class Player extends Component {
     }
   }
 
+
+  tick() {
+    setTimeout(function() {
+      const source = this.state.audioCtx.createMediaElementSource(this.state.audio);
+      const analyser = this.state.audioCtx.createAnalyser();
+      source.connect(analyser);
+      analyser.connect(this.state.audioCtx.destination);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const frequencyData = new Uint8Array(bufferLength);
+
+      analyser.getByteFrequencyData(frequencyData);
+      // width canvas / analyz
+       //console.log(bufferLength)
+      // console.log(frequencyData)
+      this.setState({
+        frequencyData
+      })
+      requestAnimationFrame(this.tick.bind(this));
+    }.bind(this), 1000/ 5);
+  }
+
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
 
     const audioElement = ReactDOM.findDOMNode(this.refs.audio);
+    const audioContext = new (AudioContext || webkitAudioContext);
+    this.setState({
+      audio: audioElement,
+      audioCtx: audioContext
+    })
+
     audioElement.addEventListener('ended', this.handleEnded, false);
     audioElement.addEventListener('loadedmetadata', this.handleLoadedMetadata, false);
     audioElement.addEventListener('loadstart', this.handleLoadStart, false);
@@ -121,6 +152,7 @@ class Player extends Component {
     audioElement.addEventListener('volumechange', this.handleVolumeChange, false);
     audioElement.volume = this.state.volume;
     audioElement.play();
+    requestAnimationFrame(this.tick.bind(this));
   }
 
   componentDidUpdate(prevProps) {
@@ -133,7 +165,6 @@ class Player extends Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown, false);
-
     const audioElement = ReactDOM.findDOMNode(this.refs.audio);
     audioElement.removeEventListener('ended', this.handleEnded, false);
     audioElement.removeEventListener('loadedmetadata', this.handleLoadedMetadata, false);
@@ -197,12 +228,15 @@ class Player extends Component {
 
   handlePause() {
     const { dispatch } = this.props;
+    const call = null
     dispatch(toggleIsPlaying(false));
   }
 
   handlePlay() {
     const { dispatch } = this.props;
+    
     dispatch(toggleIsPlaying(true));
+    //this.renderVizualiser(analyser,frequencyData);
   }
 
   handleSeekMouseDown() {
@@ -347,6 +381,9 @@ class Player extends Component {
     if (isPlaying) {
       audioElement.pause();
     } else {
+      this.setState({
+        audioElement
+      });
       audioElement.play();
     }
   }
@@ -443,7 +480,8 @@ class Player extends Component {
     const song = songs[playingSongId];
     const user = users[song.user_id];
     const { currentTime } = player;
-    const { duration, vibrant } = this.state;
+    const { duration, vibrant, frequencyData } = this.state;
+
     const prevFunc = this.changeSong.bind(this, CHANGE_TYPES.PREV);
     const nextFunc = this.changeSong.bind(
       this,
@@ -452,7 +490,9 @@ class Player extends Component {
 
     return (
       <div className="player"  style={{ backgroundImage: vibrant.swatches }}>
-        <audio id="audio" ref="audio" src={formatStreamUrl(song.stream_url)} />
+        <audio id="audio" crossOrigin="anonymous" ref="audio" src={formatStreamUrl(song.stream_url)} />
+        <Vizualizer frequencyData={frequencyData} />
+
         <div className="container">
           <div className="player-main">
             <div className="player-section player-info">

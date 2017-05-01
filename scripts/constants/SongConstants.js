@@ -6,14 +6,11 @@ export const CHANGE_TYPES = {
 };
 
 export const GENRES = [
-  'chill',
-  'deep',
-  'dubstep',
-  'house',
-  'progressive',
-  'tech',
-  'trance',
-  'tropical',
+  'Chill',
+  'Trap',
+  'Metal',
+  'Dubstep',
+  'Pop',
 ];
 
 export const GENRES_MAP = GENRES.reduce((obj, genre) =>
